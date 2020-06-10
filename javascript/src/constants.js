@@ -1,0 +1,1 @@
+const imgInternalSize = 200;

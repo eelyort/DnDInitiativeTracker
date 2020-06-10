@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>D&D Initiative Tracker</title>
+    <title>D&D Encounter Tracker</title>
+
+    <link rel="stylesheet" href="css/style.css">
 
     <!-- Load JQuery from Google CDN -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -10,6 +12,8 @@
     <!-- Load React: Compressed Version -->
     <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
+
+<!--    cd "C:\Troy\Coding\JavaScript\D&DInitiativeTracker\"    -->
 
     <!--    ADDING JSX:                                                                                             -->
     <!--    Step 0: Navigate to the "javascript" folder with "path" live template                                   -->
@@ -19,9 +23,26 @@
     <!--    Step 4: npx babel --watch src --out-dir . --presets react-app/prod                                      -->
 </head>
 <body>
-    <!--roller-->
+    <div id="main_container">
+        <div id="column">
+            <img id="logo" src="images/dndLogo.png" />
+            <h1>Dungeons & Dragons 5th Edition Encounter Tracker</h1>
+
+            <h2>Encounter:</h2>
+            <div id="encounter_box"></div>
+        </div>
+    </div>
+
+    <!--basic-->
+    <script src="javascript/imgConstants.js"></script>
+    <script src="javascript/damageTypes.js"></script>
     <script src="javascript/roller.js"></script>
     <!--skills-->
     <script src="javascript/skills.js"></script>
+
+    <script src="javascript/resources.js"></script>
+    <script src="javascript/actionsBonusReactions.js"></script>
+
+    <script src="javascript/creature.js"></script>
 </body>
 </html>

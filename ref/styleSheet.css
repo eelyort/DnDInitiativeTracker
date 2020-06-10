@@ -1,0 +1,240 @@
+/*#0B0C10*/
+/*https://visme.co/blog/website-color-schemes/ 12*/
+
+html, body{
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+}
+
+.absolute {
+    position: absolute;
+}
+
+/*flex box*/
+.flexboxBasic {
+    position: relative;
+    min-width: 0;
+    margin: 2px;
+}
+.flexParent{
+    display: flex;
+}
+/*end flex box*/
+
+/*backgrounds*/
+/*main menu*/
+.background {
+    background-color: #1F2833;
+}
+/*subcanvas*/
+.subGameCanvas.background {
+    border: 4px solid #C5C6C7;
+    background-color: #0B0C10;
+    border-radius: 10px;
+    padding: 1px;
+}
+/*pop up cards*/
+.popUp-card.background{
+    /*set one*/
+    background-color: #404c58;
+    /*set two*/
+    /*background-color: #a4a5a6;*/
+    box-shadow: 0 0 2px #C5C6C7;
+
+    /*borders*/
+    border-color: #C5C6C7;
+    border-width: 2px;
+    border-radius: 5vw;
+    border-style: solid;
+
+    opacity: 99.5%;
+}
+/*popup content*/
+.popUp-card .background {
+    padding: 0;
+    margin: 0;
+    /*set one*/
+    background-color: #d6d7d8;
+    /*set two*/
+    /*background-color: #08090d;*/
+    box-shadow: none;
+
+    /*border*/
+    border-style: solid;
+    border-width: 2px;
+    border-color: #979899;
+    border-radius: 25px;
+}
+.popUp-card .textWrapper .background {
+    /*see through background*/
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 1vw;
+    border-style: dashed;
+    /*set one*/
+    border-color: #2d5a56;
+}
+.popUp-card .textWrapper .background div {
+    font-size: calc(1.0vw + 0.35vh);
+    /*font-size: calc(80% * 1.5);*/
+    text-overflow: fade;
+    padding: 1.2vh;
+}
+/*end backgrounds*/
+
+/*text colors*/
+.gamePanelContainer{
+    color: #cfd0d1;
+}
+.popUp-card{
+    color: #1F2833;
+}
+/*end text colors*/
+
+.gamePanelContainer {
+    position: relative;
+    width: 100vw;
+    height: 50vw;
+    padding: 0;
+
+    display: block;
+    margin: auto;
+/*padding: 0;*/
+}
+
+#gamePanel-1 {
+    width: 100vw;
+    height: 100vh;
+}
+
+.gameCanvas {
+    width: 100%;
+    display: block;
+    /*height: 5%;*/
+}
+
+.textBoxWrapper *{
+    /*prevent text overflow*/
+    overflow-wrap: break-word;
+    max-width: 100%;
+    font-size: calc(0.9vh + 0.7vw);
+}
+.vertTextBoxWrapper div{
+    font-size: calc(10px + 0.8vw);
+    text-align: center;
+    /*vertical-align: middle;*/
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+}
+.vertTextBoxWrapper.left div{
+    text-align: left;
+}
+.vertTextBoxWrapper.right div{
+    text-align: right;
+}
+
+/*fade code, element should have .fadeOut, add .fadeOut2 to fade*/
+.fadeOut{
+    opacity: 80%;
+}
+.fadeOut2{
+    transition: opacity 900ms ease-in;
+    opacity: 0;
+}
+
+/*buttons of all types*/
+.button {
+    background-color: #66FCF1;
+    border-style: none;
+    border-radius: calc(32px + 3%);
+    box-shadow: 0 0 0.9vw #64f5ea;
+
+    transform: scale(1);
+
+    /*background color change eases and takes x sec, scaling (transform) etc*/
+    transition: background 150ms ease-in-out, transform 250ms ease, box-shadow 200ms ease;
+}
+.button:hover {
+    box-shadow: 0 0 1.4vw #60cdbb;
+    background-color: #67fff4;
+    transform: scale(1.01);
+}
+/*text buttons*/
+.button.gameButton {
+    font-size: 180%;
+    color: #303944;
+}
+.button:active {
+    box-shadow: none;
+    background-color: #5aefe4;
+    /*shrink on press*/
+    transform: scale(0.985);
+}
+.button.gameButton:focus {
+    outline: none;
+}
+.popUp-card .button {
+    background-color: #b5b6b7;
+    /*color: #ffffff;*/
+    border-color: rgba(31, 40, 51, 0.71);
+    border-style: solid;
+    border-width: 1px;
+    font-size: 100%;
+    box-shadow: none;
+}
+/*end buttons*/
+
+/*Carousel Stuff*/
+.selectCarouselWrapper {
+    background-color: inherit;
+    padding: 0;
+    margin: 0;
+
+    /*testing stuff TODO: remove*/
+    /*background-color: magenta;*/
+    /*border-style: solid;*/
+    /*border-color: blueviolet;*/
+    /*border-width: 5px;*/
+}
+.popUp-card .selectCarouselMember {
+    /*border*/
+    border-bottom-style: none;
+    border-radius: 25px 25px 0 0;
+
+    transition: opacity 150ms ease, transform 250ms ease, margin-top 80ms ease, padding-bottom 80ms ease, width 150ms ease-out, height 150ms ease-out, left 300ms ease-in, top 300ms ease-in;
+}
+.selectCarouselMember:hover {
+    margin-top: -8px;
+    padding-bottom: 8px;
+}
+.selectCarouselMember.currentlySelected {
+    border-color: #60cdbb;
+    box-shadow: 0 -3px 2px #60cdbb;
+}
+.selectCarouselMember.currentlySelected:hover {
+    box-shadow: 0 -3px 6px #60cdbb;
+}
+/*text of member*/
+.selectCarouselMember div {
+    font-size: calc(3px + 1.8vw);
+}
+.selectImgButton {
+    border-radius: 1.4em;
+    box-shadow: none;
+    /*transform: none;*/
+    background-color: rgba(0, 0, 0, 0);
+    opacity: 8%;
+    transition: opacity 250ms ease, transform 250ms ease;
+}
+.selectImgButton:hover {
+    box-shadow: 0 0 0.3vw #C5C6C7;
+    background-color: rgba(0, 0, 0, 0.05);
+    opacity: 100%;
+}

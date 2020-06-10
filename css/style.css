@@ -1,0 +1,90 @@
+body{
+    padding: 0;
+    margin: 0;
+}
+
+.resource_icon{
+    background-image: url("../images/button_background.png");
+    background-size: cover;
+    min-width: 40px;
+    min-height: 40px;
+    width: 7vw;
+    height: 7vw;
+
+    background-color: rgba(31, 40, 51, 0);
+
+    border-radius: 45px;
+    box-shadow: none;
+
+    overflow-y: hidden;
+    transition: box-shadow 180ms ease-out, transform 250ms ease;
+}
+.resource_icon img{
+    width: 65%;
+    height: auto;
+
+    transform: none;
+
+    position: relative;
+    left: 17.5%;
+    top: 8%;
+}
+.resource_icon:hover{
+    box-shadow: 0 1px 4px black;
+}
+.resource_icon img:active{
+    transform: translateY(5px);
+}
+.resource_icon:active{
+    transform: translateY(10px) translateX(-2px) scale(.97);
+    box-shadow: 0 1px 0 black;
+    background-image: url("../images/button_background_downb.png");
+}
+
+#main_container{
+    background-image: url("../images/background4.jpg");
+    background-repeat: repeat;
+    width: 100vw;
+    min-height: 100vh;
+}
+
+#column{
+    margin: auto;
+    min-height: 1.3px;
+    width: 70%;
+    /*background-color: #6b2500;*/
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+#column *{
+    margin: 4px auto;
+    color: #6f3514;
+}
+
+#logo{
+    max-width: 20%;
+    max-height: 16%;
+    width: auto;
+    height: auto;
+}
+
+#encounter_box{
+    width: 95%;
+    min-height: 100vh;
+    padding: 5px;
+
+    background:
+            repeating-linear-gradient(to top, rgba(238,196,135,.5) 0px,rgba(243,207,154,.5) 3.5px,rgba(248,216,162,.5) 6.5px,rgba(243,207,154,.5) 6.3px,rgba(243,207,154,.5) 9.3px,rgba(241,202,136,.5) 12px,rgba(243,207,154,.5) 15.3px,rgba(244,208,158,.5) 17.3px,rgba(243,207,154,.5) 19px,rgba(243,207,154,.5) 21px,rgba(250,221,176,.5) 23.3px,rgba(250,221,176,.5) 25.3px,rgba(243,207,154,.5) 27px,rgba(238,200,138,.5) 29.3px,rgba(243,207,154,.5) 29.3px,rgba(243,207,154,.5) 32.3px,rgba(243,207,154,.5) 34px,rgba(243,207,154,.5) 37.3px,rgba(250,221,176,.5) 40px,rgba(250,221,176,.5) 43px,rgba(243,207,154,.5) 43.3px,rgba(243,207,154,.5) 44.3px,rgba(243,207,154,.5) 47.3px,rgba(238,200,138,.5) 49px,rgba(243,207,154,.5) 52.3px,rgba(250,221,176,.5) 54px,rgba(244,208,158,.5) 56px,rgba(243,207,154,.5) 59.3px,rgba(244,208,158,.5) 61px,rgba(250,221,176,.5) 64.3px,rgba(243,207,154,.5) 64.3px,rgba(244,208,158,.5) 66.3px,rgba(243,207,154,.5) 69.3px,rgba(248,216,162,.5) 71px,rgba(243,207,154,.5) 74.3px,rgba(243,207,154,.5) 76px,rgba(243,207,154,.5) 77px,rgba(243,207,154,.5) 80.3px,rgba(250,221,176,.5) 81.3px,rgba(243,207,154,.5) 83px,rgba(250,221,176,.5) 83.3px,rgba(250,221,176,.5) 85.3px,rgba(243,207,154,.5) 87.3px,rgba(250,221,176,.5) 89px,rgba(250,221,176,.5) 91px,rgba(243,207,154,.5) 92.3px,rgba(248,216,162,.5) 96px,rgba(243,207,154,.5) 97.3px,rgba(243,207,154,.5) 97px,rgba(243,207,154,.5) 98.3px,rgba(243,207,154,.5) 100px)
+            ,repeating-linear-gradient(to bottom, rgba(238,196,135,.3) 0.3px,rgba(243,207,154,.3) 3px,rgba(248,216,162,.3) 6px,rgba(243,207,154,.3) 6px,rgba(243,207,154,.3) 9px,rgba(241,202,136,.3) 12px,rgba(243,207,154,.3) 15px,rgba(244,208,158,.3) 17px,rgba(243,207,154,.3) 19px,rgba(243,207,154,.3) 21px,rgba(250,221,176,.3) 23px,rgba(250,221,176,.3) 25px,rgba(243,207,154,.3) 27px,rgba(238,200,138,.3) 29px,rgba(243,207,154,.3) 29px,rgba(243,207,154,.3) 32px,rgba(243,207,154,.3) 34px,rgba(243,207,154,.3) 37px,rgba(250,221,176,.3) 40px,rgba(250,221,176,.3) 43px,rgba(243,207,154,.3) 43px,rgba(243,207,154,.3) 44px,rgba(243,207,154,.3) 47px,rgba(238,200,138,.3) 49px,rgba(243,207,154,.3) 52px,rgba(250,221,176,.3) 54px,rgba(244,208,158,.3) 56px,rgba(243,207,154,.3) 59px,rgba(244,208,158,.3) 61px,rgba(250,221,176,.3) 64px,rgba(243,207,154,.3) 64px,rgba(244,208,158,.3) 66px,rgba(243,207,154,.3) 69px,rgba(248,216,162,.3) 71px,rgba(243,207,154,.3) 74px,rgba(243,207,154,.3) 76px,rgba(243,207,154,.3) 77px,rgba(243,207,154,.3) 80px,rgba(250,221,176,.3) 81px,rgba(243,207,154,.3) 83px,rgba(250,221,176,.3) 83px,rgba(250,221,176,.3) 85px,rgba(243,207,154,.3) 87px,rgba(250,221,176,.3) 89px,rgba(250,221,176,.3) 91px,rgba(243,207,154,.3) 92px,rgba(248,216,162,.3) 96px,rgba(243,207,154,.3) 97px,rgba(243,207,154,.3) 97px,rgba(243,207,154,.3) 98px,rgba(243,207,154,.3) 100px)
+            ,repeating-linear-gradient(to top, rgba(238,196,135,.3) 0px,rgba(243,207,154,.3) 3px,rgba(238,200,138,.3) 49px,rgba(243,207,154,.3) 52px,rgba(250,221,176,.3) 54px,rgba(244,208,158,.3) 56px,rgba(243,207,154,.2) 59px,rgba(244,208,158,.3) 61px,rgba(250,221,176,.3) 64px,rgba(243,207,154,.3) 64px,rgba(244,208,158,.3) 66px,rgba(243,207,154,.3) 69px,rgba(248,216,162,.3) 71px,rgba(243,207,154,.3) 74px,rgba(243,207,154,.3) 76px,rgba(243,207,154,.3) 77px,rgba(243,207,154,.3) 80px,rgba(250,221,176,.3) 81px,rgba(243,207,154,.3) 83px,rgba(250,221,176,.3) 83px,rgba(250,221,176,.3) 85px,rgba(243,207,154,.3) 87px,rgba(250,221,176,.3) 89px,rgba(250,221,176,.3) 91px,rgba(243,207,154,.3) 92px,rgba(248,216,162,.3) 96px,rgba(243,207,154,.3) 97px,rgba(243,207,154,.3) 97px,rgba(243,207,154,.3) 98px,rgba(243,207,154,.3) 100px)
+            ;
+    background-color: rgba(93, 46, 21, 0.82);
+
+    border: 20px solid #56160f;
+    /*border-image: url("../images/wooden_frame.png") 9% repeat;*/
+    border-image: url("../images/wooden_frame2.png") 8.4% stretch;
+
+    box-shadow: inset 0 0 15px 4px black;
+}
