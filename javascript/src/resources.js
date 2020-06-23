@@ -1,5 +1,7 @@
-class Resource{
+class Resource extends Class{
     constructor(name, max, icon = null){
+        super();
+
         this.name = name;
         this.maxVal = max;
         this.currVal = this.maxVal;
@@ -10,6 +12,7 @@ class Resource{
     use(amount){
         if(this.currVal >= amount){
             this.currVal -= amount;
+            this.rerender();
             return true;
         }
         return false;
@@ -19,6 +22,7 @@ class Resource{
         if(this.currVal > this.maxVal){
             this.currVal = this.maxVal;
         }
+        this.rerender();
     }
     turnStart(){
         // nothing
@@ -35,41 +39,49 @@ class FullRechargeResource extends Resource{
     }
 }
 
-class Action extends FullRechargeResource{
+class ActionResource extends FullRechargeResource{
     constructor(){
         super("Action", 1, "action.png");
     }
 }
 
-class BonusAction extends FullRechargeResource{
+class BonusActionResource extends FullRechargeResource{
     constructor(){
         super("Bonus Action", 1, "bonus_action.png");
     }
 }
 
-class Reaction extends FullRechargeResource{
+class ReactionResource extends FullRechargeResource{
     constructor(){
         super("Reaction", 1, "reaction.png");
     }
 }
 
-class LegendaryActions extends FullRechargeResource{
+class LegendaryActionsResource extends FullRechargeResource{
     constructor(){
         super("Legendary Actions", 3);
     }
 }
 
+function getDefaultResources(){
+    return [new ActionResource(), new BonusActionResource(), new ReactionResource()];
+}
+
 // REACT renderer - separate so that the object doesn't keep getting remade
-class ResourceRenderer extends React.Component{
+class ResourceRenderer extends ReactComponent{
     render() {
         return (
-          <div className="resource_icon">
+          <div className="resource_icon icon">
             <img src={"images/" + this.props.resource.icon} />
           </div>
+        );
+    }
+    static makeMe(resource){
+        return(
+            <ResourceRenderer resource={resource} />
         );
     }
 }
 
 // TODO delete testing
-ReactDOM.render(<ResourceRenderer resource={new Action()} />, $("#encounter_box")[0]);
-ReactDOM.render(<ResourceRenderer resource={new BonusAction()} />, $("#encounter_box")[0]);
+// ReactDOM.render(ResourceRenderer.makeMe(new ActionResource()), $("#encounter_box")[0]);

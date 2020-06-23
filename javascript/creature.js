@@ -4,47 +4,67 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Creature = function () {
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Creature = function (_Class) {
+    _inherits(Creature, _Class);
+
     // resistances: 0-none, 1-resist, 2-immune, -1-vulnerable, 10x-magical x
-    function Creature(name, stats, skills, hp, ac, spd, resistances) {
-        var attributes = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : [];
-        var passives = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : [];
-        var actions = arguments.length > 9 && arguments[9] !== undefined ? arguments[9] : [];
-        var bonusActions = arguments.length > 10 && arguments[10] !== undefined ? arguments[10] : [];
-        var reactions = arguments.length > 11 && arguments[11] !== undefined ? arguments[11] : [];
-        var resources = arguments.length > 12 && arguments[12] !== undefined ? arguments[12] : null;
+    function Creature(avatar, name, stats, skills, hp, ac, spd) {
+        var resistances = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : [];
+        var attributes = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : [];
+        var passives = arguments.length > 9 && arguments[9] !== undefined ? arguments[9] : [];
+        var actions = arguments.length > 10 && arguments[10] !== undefined ? arguments[10] : [];
+        var bonusActions = arguments.length > 11 && arguments[11] !== undefined ? arguments[11] : [];
+        var reactions = arguments.length > 12 && arguments[12] !== undefined ? arguments[12] : [];
+        var resources = arguments.length > 13 && arguments[13] !== undefined ? arguments[13] : null;
 
         _classCallCheck(this, Creature);
 
-        this.name = name;
-        this.stats = stats;
-        this.skills = skills;
-        this.maxHP = hp;
-        this.currHP = this.maxHP;
-        this.ac = ac;
-        this.speed = spd;
-        this.resistances = resistances;
+        var _this = _possibleConstructorReturn(this, (Creature.__proto__ || Object.getPrototypeOf(Creature)).call(this));
+
+        if (avatar) {
+            _this.avatar = avatar;
+        } else {
+            _this.avatar = defaultAvatar;
+        }
+
+        _this.name = name;
+        _this.stats = stats;
+        _this.skills = skills;
+        _this.maxHP = hp;
+        _this.currHP = _this.maxHP;
+        _this.ac = ac;
+        _this.speed = spd;
+        _this.resistances = resistances;
 
         // always active, non-combat abilities and lore
-        this.attributes = attributes;
+        _this.attributes = attributes;
 
         // conditional passive abilities with actual effects such as vampire regen
-        this.passives = passives;
+        _this.passives = passives;
 
         // conditions such as grappled, paralyzed etc TODO: same loop as above
-        this.conditions = [];
+        _this.conditions = [];
 
         // actions TODO: multiattack is one action
-        this.actions = actions;
+        _this.actions = actions;
 
         // bonus actions
-        this.bonusActions = bonusActions;
+        _this.bonusActions = bonusActions;
 
         // reactions
-        this.reactions = reactions;
+        _this.reactions = reactions;
 
         // resources: ki, legendary actions, legendary resistances
-        this.resources = resources;
+        if (resources) {
+            _this.resources = getDefaultResources().concat(resources);
+        } else {
+            _this.resources = getDefaultResources();
+        }
+        return _this;
     }
     // damages, takes into account resistances and whatnot
 
@@ -83,6 +103,7 @@ var Creature = function () {
             if (this.currHP <= 0) {
                 this.dropTo0();
             }
+            this.rerender();
         }
         // heal
 
@@ -98,12 +119,14 @@ var Creature = function () {
             if (this.currHP > this.maxHP) {
                 this.currHP = this.maxHP;
             }
+            this.rerender();
         }
         // drop to 0 hp TODO: death saves for players and overkill
 
     }, {
         key: "dropTo0",
         value: function dropTo0() {
+            this.currHP = 0;
             this.die();
         }
         // die
@@ -116,4 +139,78 @@ var Creature = function () {
     }]);
 
     return Creature;
-}();
+}(Class);
+
+// REACT renderer - separate so that the object doesn't keep getting remade
+
+
+var CreatureRenderer = function (_ReactComponent) {
+    _inherits(CreatureRenderer, _ReactComponent);
+
+    function CreatureRenderer() {
+        _classCallCheck(this, CreatureRenderer);
+
+        return _possibleConstructorReturn(this, (CreatureRenderer.__proto__ || Object.getPrototypeOf(CreatureRenderer)).apply(this, arguments));
+    }
+
+    _createClass(CreatureRenderer, [{
+        key: "render",
+        value: function render() {
+            var resources = this.props.creature.resources.map(function (i) {
+                return React.createElement(
+                    "div",
+                    null,
+                    ResourceRenderer.makeMe(i)
+                );
+            });
+
+            console.log(this.props.creature.resources);
+            console.log(resources);
+
+            return React.createElement(
+                "div",
+                { className: "creature" },
+                React.createElement("img", { className: "avatar", src: "images/" + this.props.creature.avatar }),
+                React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "horz_flex" },
+                        React.createElement(
+                            "h1",
+                            { className: "creature_name" },
+                            this.props.creature.name
+                        ),
+                        React.createElement(
+                            ImgText,
+                            { small: 3, image: "info_circle.png", text: "" },
+                            React.createElement(FloatComponent, { component: React.createElement("div", null), maxWidth: 100, maxHeight: 100 })
+                        )
+                    ),
+                    React.createElement(Bar, { barColor: healthbarcolor, curr: this.props.creature.currHP, max: this.props.creature.maxHP, className: "hp_bar" })
+                ),
+                React.createElement(
+                    "div",
+                    { className: "vert_flex" },
+                    React.createElement(ImgText, { small: true, image: "shield.png", text: this.props.creature.ac }),
+                    React.createElement(ImgText, { small: true, image: "movement.png", text: this.props.creature.speed })
+                ),
+                resources
+            );
+        }
+    }], [{
+        key: "makeMe",
+        value: function makeMe(creature) {
+            return React.createElement(CreatureRenderer, { creature: creature });
+        }
+    }]);
+
+    return CreatureRenderer;
+}(ReactComponent);
+
+// TODO: delete testing
+
+
+var testCreature = new Creature(null, "Test Name", [10, 10, 10, 10, 10, 10], JSON.parse(JSON.stringify(normalSkills)), 100, 11, 30, getEmptyResistances());
+ReactDOM.render(CreatureRenderer.makeMe(testCreature), $('#encounter_box')[0]);

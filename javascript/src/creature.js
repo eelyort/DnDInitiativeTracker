@@ -1,6 +1,15 @@
-class Creature{
+class Creature extends Class{
     // resistances: 0-none, 1-resist, 2-immune, -1-vulnerable, 10x-magical x
-    constructor(name, stats, skills, hp, ac, spd, resistances, attributes = [], passives = [], actions = [], bonusActions = [], reactions = [], resources = null){
+    constructor(avatar, name, stats, skills, hp, ac, spd, resistances = [], attributes = [], passives = [], actions = [], bonusActions = [], reactions = [], resources = null){
+        super();
+
+        if(avatar) {
+            this.avatar = avatar;
+        }
+        else{
+            this.avatar = defaultAvatar;
+        }
+
         this.name = name;
         this.stats = stats;
         this.skills = skills;
@@ -29,7 +38,12 @@ class Creature{
         this.reactions = reactions;
 
         // resources: ki, legendary actions, legendary resistances
-        this.resources = resources;
+        if(resources) {
+            this.resources = getDefaultResources().concat(resources);
+        }
+        else{
+            this.resources = getDefaultResources();
+        }
     }
     // damages, takes into account resistances and whatnot
     damageMe(amount, type){
@@ -63,6 +77,7 @@ class Creature{
         if(this.currHP <= 0){
             this.dropTo0();
         }
+        this.rerender();
     }
     // heal
     healMe(amount){
@@ -76,9 +91,11 @@ class Creature{
         if(this.currHP > this.maxHP){
             this.currHP = this.maxHP;
         }
+        this.rerender();
     }
     // drop to 0 hp TODO: death saves for players and overkill
     dropTo0(){
+        this.currHP = 0;
         this.die();
     }
     // die
@@ -86,3 +103,43 @@ class Creature{
         // TODO
     }
 }
+
+// REACT renderer - separate so that the object doesn't keep getting remade
+class CreatureRenderer extends ReactComponent{
+    render() {
+        const resources = this.props.creature.resources.map((i) => <div>{ResourceRenderer.makeMe(i)}</div>);
+
+        console.log(this.props.creature.resources);
+        console.log(resources);
+
+        return(
+            <div className="creature">
+                <img className="avatar" src={"images/" + this.props.creature.avatar} />
+                <div>
+                    <div className={"horz_flex"}>
+                        <h1 className="creature_name">{this.props.creature.name}</h1>
+                        <ImgText small={3} image={"info_circle.png"} text={""}>
+                            <FloatComponent component={(<div/>)} maxWidth={100} maxHeight={100} />
+                        </ImgText>
+                    </div>
+                    <Bar barColor={healthbarcolor} curr={this.props.creature.currHP} max={this.props.creature.maxHP} className="hp_bar" />
+                </div>
+                <div className={"vert_flex"}>
+                    <ImgText small={true} image={"shield.png"} text={this.props.creature.ac} />
+                    <ImgText small={true} image={"movement.png"} text={this.props.creature.speed} />
+                </div>
+                {resources}
+            </div>
+        );
+    }
+
+    static makeMe(creature) {
+        return (
+            <CreatureRenderer creature={creature}/>
+        );
+    }
+}
+
+// TODO: delete testing
+let testCreature = new Creature(null, "Test Name", [10, 10, 10, 10, 10, 10], JSON.parse(JSON.stringify(normalSkills)), 100, 11, 30, getEmptyResistances());
+ReactDOM.render(CreatureRenderer.makeMe(testCreature), $('#encounter_box')[0]);
