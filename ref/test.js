@@ -4,3 +4,5 @@ a["sup"] = 54;
 const {int: int, double: c, sup: sup, string: e} = a;
 
 console.log(`int: ${int}, double: ${c}, sup: ${sup}, string: ${e}`);
+
+console.log("d20".split("d"));

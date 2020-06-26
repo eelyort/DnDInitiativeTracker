@@ -2,38 +2,54 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 // rolls the dice and adds up the total
 function roll(str) {
+    var useAvg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
     var tokens = str.split(" ");
     var tot = 0;
     for (var i = 0; i < tokens.length; i++) {
-        var _tokens$i$replace$spl = tokens[i].replace("+", "").split("d"),
-            _tokens$i$replace$spl2 = _slicedToArray(_tokens$i$replace$spl, 2),
-            num = _tokens$i$replace$spl2[0],
-            type = _tokens$i$replace$spl2[1];
+        // dice
+        if (tokens[i].includes("d")) {
+            var _tokens$i$replace$spl = tokens[i].replace("+", "").split("d"),
+                _tokens$i$replace$spl2 = _slicedToArray(_tokens$i$replace$spl, 2),
+                num = _tokens$i$replace$spl2[0],
+                type = _tokens$i$replace$spl2[1];
+            // console.log(`num: ${num}, type: ${type}`);
 
-        var xVantage = 0;
 
-        // advantage/disadvantage
-        if (isNaN(num)) {
-            if (num.includes("DIS")) {
-                xVantage = -1;
-            } else if (num.includes("ADV")) {
-                xVantage = 1;
+            var xVantage = 0;
+
+            // advantage/disadvantage
+            if (isNaN(num)) {
+                if (num.includes("DIS")) {
+                    xVantage = -1;
+                } else if (num.includes("ADV")) {
+                    xVantage = 1;
+                }
+                num = num.substring(3);
             }
-            num = num.substring(3);
-        }
 
-        num = parseInt(num);
-        type = parseInt(type);
+            num = num === "" ? 1 : parseInt(num);
+            type = parseInt(type);
 
-        for (var j = 0; j < num; j++) {
-            if (!xVantage) {
-                tot += Math.floor(Math.random() * type);
-            } else if (xVantage === 1) {
-                tot += Math.max(Math.floor(Math.random() * type), Math.floor(Math.random() * type));
-            } else {
-                tot += Math.min(Math.floor(Math.random() * type), Math.floor(Math.random() * type));
+            if (useAvg) {
+                tot += num * Math.ceil(type / 2);
+                continue;
+            }
+
+            for (var j = 0; j < num; j++) {
+                if (!xVantage) {
+                    tot += Math.floor(Math.random() * type);
+                } else if (xVantage === 1) {
+                    tot += Math.max(Math.floor(Math.random() * type), Math.floor(Math.random() * type));
+                } else {
+                    tot += Math.min(Math.floor(Math.random() * type), Math.floor(Math.random() * type));
+                }
             }
         }
+        // flat number
+        else {
+                tot += parseInt(tokens[i].replace("+", ""));
+            }
     }
 
     return tot;

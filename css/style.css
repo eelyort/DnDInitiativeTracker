@@ -50,15 +50,15 @@ body{
 }
 
 .creature{
-    width: 94%;
-    padding: 8px;
+    width: 90%;
+    padding: 1.5vw;
 
-    margin: 6px auto;
+    margin: 1.5vw auto;
 
     background-image: url("../images/wooden_board.png");
     background-size: cover;
 
-    border: 10px solid #56160f;
+    border: 1.5vw solid #56160f;
     border-image: url("../images/wooden_frame.png") 9% repeat;
 
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.75);
@@ -89,7 +89,7 @@ body{
 .creature_name{
     margin-top: -0.1vw;
     font-size: calc(50% + 1.2vw);
-    margin-right: 0.6vw;
+    margin-right: 0.55vw;
 }
 
 .hp_bar{
@@ -166,6 +166,16 @@ body{
     top: 50%;
     transform: translateY(-50%);
 }
+.icon.small3 > .text{
+    font-size: 0.8vw;
+}
+
+.attribute{
+    font-size: 110%;
+}
+.attribute b{
+    font-size: 110%;
+}
 
 .resource_icon{
     background-image: url("../images/button_background.png");
@@ -215,6 +225,17 @@ body{
     color: black;
 }
 
+.initiative_count_wrapper{
+    position: relative;
+
+    display: contents;
+}
+.initiative_count_wrapper > div{
+    position: absolute;
+
+    margin: -2.2vw 0 0 -2.2vw;
+}
+
 #main_container{
     background-image: url("../images/background4.jpg");
     background-repeat: repeat;
@@ -246,7 +267,7 @@ body{
 #encounter_box{
     width: 90%;
     min-height: 10vh;
-    padding: 12px;
+    padding: 2vw;
 
     background:
             repeating-linear-gradient(to top, rgba(238,196,135,.5) 0px,rgba(243,207,154,.5) 3.5px,rgba(248,216,162,.5) 6.5px,rgba(243,207,154,.5) 6.3px,rgba(243,207,154,.5) 9.3px,rgba(241,202,136,.5) 12px,rgba(243,207,154,.5) 15.3px,rgba(244,208,158,.5) 17.3px,rgba(243,207,154,.5) 19px,rgba(243,207,154,.5) 21px,rgba(250,221,176,.5) 23.3px,rgba(250,221,176,.5) 25.3px,rgba(243,207,154,.5) 27px,rgba(238,200,138,.5) 29.3px,rgba(243,207,154,.5) 29.3px,rgba(243,207,154,.5) 32.3px,rgba(243,207,154,.5) 34px,rgba(243,207,154,.5) 37.3px,rgba(250,221,176,.5) 40px,rgba(250,221,176,.5) 43px,rgba(243,207,154,.5) 43.3px,rgba(243,207,154,.5) 44.3px,rgba(243,207,154,.5) 47.3px,rgba(238,200,138,.5) 49px,rgba(243,207,154,.5) 52.3px,rgba(250,221,176,.5) 54px,rgba(244,208,158,.5) 56px,rgba(243,207,154,.5) 59.3px,rgba(244,208,158,.5) 61px,rgba(250,221,176,.5) 64.3px,rgba(243,207,154,.5) 64.3px,rgba(244,208,158,.5) 66.3px,rgba(243,207,154,.5) 69.3px,rgba(248,216,162,.5) 71px,rgba(243,207,154,.5) 74.3px,rgba(243,207,154,.5) 76px,rgba(243,207,154,.5) 77px,rgba(243,207,154,.5) 80.3px,rgba(250,221,176,.5) 81.3px,rgba(243,207,154,.5) 83px,rgba(250,221,176,.5) 83.3px,rgba(250,221,176,.5) 85.3px,rgba(243,207,154,.5) 87.3px,rgba(250,221,176,.5) 89px,rgba(250,221,176,.5) 91px,rgba(243,207,154,.5) 92.3px,rgba(248,216,162,.5) 96px,rgba(243,207,154,.5) 97.3px,rgba(243,207,154,.5) 97px,rgba(243,207,154,.5) 98.3px,rgba(243,207,154,.5) 100px, rgba(238,196,135,.5) 101px)
@@ -255,7 +276,7 @@ body{
             ;
     background-color: rgba(66, 30, 14, 0.85);
 
-    border: 20px solid #56160f;
+    border: calc(1.6vw + 8px) solid #56160f;
     /*border-image: url("../images/wooden_frame.png") 9% repeat;*/
     border-image: url("../images/wooden_frame2.png") 8.4% stretch;
 

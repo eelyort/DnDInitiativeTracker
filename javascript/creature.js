@@ -13,7 +13,7 @@ var Creature = function (_Class) {
 
     // resistances: 0-none, 1-resist, 2-immune, -1-vulnerable, 10x-magical x
     function Creature(avatar, name, stats, skills, hp, ac, spd) {
-        var resistances = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : [];
+        var resistances = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : null;
         var attributes = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : [];
         var passives = arguments.length > 9 && arguments[9] !== undefined ? arguments[9] : [];
         var actions = arguments.length > 10 && arguments[10] !== undefined ? arguments[10] : [];
@@ -33,11 +33,20 @@ var Creature = function (_Class) {
 
         _this.name = name;
         _this.stats = stats;
+        _this.statMods = _this.stats.map(function (i) {
+            return Math.floor((i - 10) / 2);
+        });
         _this.skills = skills;
-        _this.maxHP = hp;
-        _this.currHP = _this.maxHP;
+        // string
+        _this.hpRaw = hp + "";
+        _this.maxHP = -1;
+        _this.currHP = -1;
+        _this.initiative = 0;
         _this.ac = ac;
         _this.speed = spd;
+        if (!resistances) {
+            resistances = getEmptyResistances();
+        }
         _this.resistances = resistances;
 
         // always active, non-combat abilities and lore
@@ -133,13 +142,108 @@ var Creature = function (_Class) {
 
     }, {
         key: "die",
-        value: function die() {
-            // TODO
+        value: function die() {}
+        // TODO
+
+        // call at beginning of combat
+
+    }, {
+        key: "init",
+        value: function init() {
+            var doRollHP = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+            // console.log(this.stats);
+            // console.log(this.statMods);
+
+            // roll initiative
+            this.initiative = roll("1d20") + this.statMods[1];
+
+            // hp
+            if (isNaN(this.hpRaw)) {
+                if (doRollHP) {
+                    this.maxHP = roll(this.hpRaw);
+                } else {
+                    this.maxHP = roll(this.hpRaw, true);
+                }
+            } else {
+                this.maxHP = parseInt(this.hpRaw);
+            }
+            this.currHP = this.maxHP;
         }
     }]);
 
     return Creature;
 }(Class);
+
+var InitiativeCount = function (_React$Component) {
+    _inherits(InitiativeCount, _React$Component);
+
+    function InitiativeCount() {
+        _classCallCheck(this, InitiativeCount);
+
+        return _possibleConstructorReturn(this, (InitiativeCount.__proto__ || Object.getPrototypeOf(InitiativeCount)).apply(this, arguments));
+    }
+
+    _createClass(InitiativeCount, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "initiative_count_wrapper" },
+                React.createElement(ImgText, { small: 2, image: "circle_wood_border.png", text: this.props.init })
+            );
+        }
+    }]);
+
+    return InitiativeCount;
+}(React.Component);
+
+var InfoMenu = function (_React$Component2) {
+    _inherits(InfoMenu, _React$Component2);
+
+    function InfoMenu() {
+        _classCallCheck(this, InfoMenu);
+
+        return _possibleConstructorReturn(this, (InfoMenu.__proto__ || Object.getPrototypeOf(InfoMenu)).apply(this, arguments));
+    }
+
+    _createClass(InfoMenu, [{
+        key: "render",
+        value: function render() {
+            var attribs = this.props.attributes.map(function (i) {
+                return React.createElement(
+                    "div",
+                    { className: "attribute" },
+                    React.createElement(
+                        "p",
+                        null,
+                        React.createElement(
+                            "b",
+                            null,
+                            React.createElement(
+                                "i",
+                                null,
+                                i.name,
+                                ". "
+                            )
+                        ),
+                        i.description
+                    )
+                );
+            });
+
+            // console.log(attribs);
+
+            return React.createElement(
+                "div",
+                { style: { "display": "contents" } },
+                attribs
+            );
+        }
+    }]);
+
+    return InfoMenu;
+}(React.Component);
 
 // REACT renderer - separate so that the object doesn't keep getting remade
 
@@ -156,20 +260,43 @@ var CreatureRenderer = function (_ReactComponent) {
     _createClass(CreatureRenderer, [{
         key: "render",
         value: function render() {
+            var _this5 = this;
+
+            // TODO: delete testing
             var resources = this.props.creature.resources.map(function (i) {
-                return React.createElement(
-                    "div",
-                    null,
-                    ResourceRenderer.makeMe(i)
-                );
+                if (i.name === "Action") {
+                    return React.createElement(
+                        "div",
+                        { onClick: function onClick() {
+                                _this5.props.creature.damageMe(Math.floor(Math.random() * 20), 0);
+                            } },
+                        ResourceRenderer.makeMe(i)
+                    );
+                }
+                if (i.name === "Bonus Action") {
+                    return React.createElement(
+                        "div",
+                        { onClick: function onClick() {
+                                _this5.props.creature.healMe(Math.floor(Math.random() * 20));
+                            } },
+                        ResourceRenderer.makeMe(i)
+                    );
+                } else {
+                    return React.createElement(
+                        "div",
+                        null,
+                        ResourceRenderer.makeMe(i)
+                    );
+                }
             });
 
-            console.log(this.props.creature.resources);
-            console.log(resources);
+            // console.log(this.props.creature.resources);
+            // console.log(resources);
 
             return React.createElement(
                 "div",
                 { className: "creature" },
+                React.createElement(InitiativeCount, { init: this.props.creature.initiative }),
                 React.createElement("img", { className: "avatar", src: "images/" + this.props.creature.avatar }),
                 React.createElement(
                     "div",
@@ -185,7 +312,11 @@ var CreatureRenderer = function (_ReactComponent) {
                         React.createElement(
                             ImgText,
                             { small: 3, image: "info_circle.png", text: "" },
-                            React.createElement(FloatComponent, { component: React.createElement("div", null), maxWidth: 100, maxHeight: 100 })
+                            React.createElement(
+                                FloatComponent,
+                                null,
+                                React.createElement(InfoMenu, { attributes: this.props.creature.attributes })
+                            )
                         )
                     ),
                     React.createElement(Bar, { barColor: healthbarcolor, curr: this.props.creature.currHP, max: this.props.creature.maxHP, className: "hp_bar" })
@@ -212,5 +343,6 @@ var CreatureRenderer = function (_ReactComponent) {
 // TODO: delete testing
 
 
-var testCreature = new Creature(null, "Test Name", [10, 10, 10, 10, 10, 10], JSON.parse(JSON.stringify(normalSkills)), 100, 11, 30, getEmptyResistances());
+var testCreature = new Creature(null, "Test Name", [20, 12, 1, 16, 19, 9], JSON.parse(JSON.stringify(normalSkills)), "20d10 +d16 +5", 11, 30, getEmptyResistances(), GETSAMPLEATTRIBUTES());
+testCreature.init(true);
 ReactDOM.render(CreatureRenderer.makeMe(testCreature), $('#encounter_box')[0]);

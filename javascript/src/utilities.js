@@ -1,7 +1,7 @@
 class ImgText extends React.Component{
     render() {
         return (
-            <div className={"icon" + ((this.props.small) ? (" small" + (this.props.small + 0)) : (""))}>
+            <div className={"icon" + ((this.props.small) ? (" small" + (this.props.small + 0)) : ("")) + ((this.props.className) ? (" " + this.props.className) : (""))}>
                 <img src={"images/" + this.props.image} />
                 <p className={"text"}>
                     {this.props.text}
@@ -37,8 +37,11 @@ class WindowSizes extends React.Component{
 // floating hide/unhide component
 class Float extends WindowSizes{
     render() {
-        const {parentRef: parentRef, component: component, maxWidth: maxWidth, maxHeight: maxHeight} = this.props;
         const {windowWidth: windowWidth, windowHeight: windowHeight} = this.state;
+        let {parentRef: parentRef, maxWidth: maxWidth, maxHeight: maxHeight} = this.props;
+
+        maxWidth = maxWidth * windowWidth;
+        maxHeight = maxHeight * windowHeight;
 
         const left = parentRef.current.getBoundingClientRect().left;
         const top = parentRef.current.getBoundingClientRect().top;
@@ -72,7 +75,7 @@ class Float extends WindowSizes{
                     (<img className={"float_arrow left"} alt={"chat bubble"} src={"images/chat_left.png"} />) :
                     (<img className={"float_arrow right"} alt={"chat bubble"} src={"images/chat_right.png"} />))}
                 <div className={"float"} style={style} ref={this.myRef}>
-                    {component}
+                    {this.props.children}
                 </div>
             </div>
         );
@@ -88,12 +91,12 @@ class FloatComponent extends React.Component{
         this.handleExit = this.handleExit.bind(this);
     }
     render() {
-        let {component: component, maxWidth: maxWidth, maxHeight: maxHeight} = this.props;
+        let {maxWidth: maxWidth, maxHeight: maxHeight} = this.props;
         if(!maxHeight){
-            maxHeight = 50;
+            maxHeight = .4;
         }
         if(!maxWidth){
-            maxWidth = 50;
+            maxWidth = .4;
         }
 
         let style = {
@@ -107,7 +110,9 @@ class FloatComponent extends React.Component{
         if(this.state.show){
             return(
                 <div ref={this.myRef} style={style} onMouseEnter={this.handleEnter} onDragEnter={this.handleEnter} onMouseLeave={this.handleExit} onDragLeave={this.handleExit}>
-                    <Float parentRef={this.myRef} component={component} maxWidth={maxWidth} maxHeight={maxHeight} />
+                    <Float parentRef={this.myRef} maxWidth={maxWidth} maxHeight={maxHeight} >
+                        {this.props.children}
+                    </Float>
                 </div>
             );
         }
