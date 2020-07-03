@@ -1,6 +1,6 @@
 class Creature extends Class{
     // resistances: 0-none, 1-resist, 2-immune, -1-vulnerable, 10x-magical x
-    constructor(avatar, name, stats, skills, hp, ac, spd, resistances = null, attributes = [], passives = [], actions = [], bonusActions = [], reactions = [], resources = null){
+    constructor(avatar, name, stats, skills, hp, ac, spd, proficiencyBonus, saveProficiencies = [0,0,0,0,0,0], resistances = null, attributes = [], passives = [], actions = [], bonusActions = [], reactions = [], resources = null){
         super();
 
         if(avatar) {
@@ -13,6 +13,10 @@ class Creature extends Class{
         this.name = name;
         this.stats = stats;
         this.statMods = this.stats.map((i) => Math.floor((i - 10)/2));
+
+        this.profBonus = proficiencyBonus;
+        this.saveProf = saveProficiencies;
+
         this.skills = skills;
         // string
         this.hpRaw = hp + "";
@@ -86,6 +90,32 @@ class Creature extends Class{
         }
         this.rerender();
     }
+    // attack takes into account ac or save
+    attackMe(attack){
+        let success;
+
+        // to hit
+        if(attack.isToHit){
+            success = attack.toHitToSave >= this.ac;
+        }
+        // save
+        else{
+            // TODO: display this save somewhere?
+            let save = roll("1d20") + this.statMods[attack.saveStat] + (this.saveProf[attack.saveStat] * this.profBonus);
+            success = save >= attack.toHitToSave;
+        }
+
+        if(success){
+            this.damageMe(attack.successDamage, attack.damageType);
+            this.conditions.append(attack.successConditions);
+        }
+        else{
+            this.damageMe(attack.failDamage, attack.damageType);
+            this.conditions.append(attack.failConditions);
+        }
+
+        return success;
+    }
     // heal
     healMe(amount){
         if(this.currHP <= 0){
@@ -131,6 +161,13 @@ class Creature extends Class{
         }
         this.currHP = this.maxHP;
     }
+    updateWithRenderer(rend) {
+        super.updateWithRenderer(rend);
+
+        for (let i = 0; i < this.resources.length; i++) {
+            this.resources[i].updateWithRenderer(rend);
+        }
+    }
 }
 
 class InitiativeCount extends React.Component{
@@ -171,14 +208,43 @@ class CreatureRenderer extends ReactComponent{
     render() {
         // TODO: delete testing
         const resources = this.props.creature.resources.map((i) => {
+            let text = "";
+            if(i.maxVal > 1){
+                text = `${i.currVal}/${i.maxVal}`;
+            }
+            let extraClass = "";
+            if(i.currVal === 0){
+                extraClass = " out";
+            }
             if(i.name === "Action"){
-                return (<div onClick={() => {this.props.creature.damageMe(Math.floor(Math.random() * 20), 0)}}>{ResourceRenderer.makeMe(i)}</div>);
+                return (
+                    <div>
+                        <ImgText small={0} image={i.icon} text={text} className={"resource_icon" + extraClass}>
+                            <FloatComponentClick>
+
+                            </FloatComponentClick>
+                        </ImgText>
+                    </div>
+                );
             }
             if(i.name === "Bonus Action"){
-            return (<div onClick={() => {this.props.creature.healMe(Math.floor(Math.random() * 20))}}>{ResourceRenderer.makeMe(i)}</div>);
-        }
+                return (
+                    <div>
+                        <ImgText small={0} image={i.icon} text={text} className={"resource_icon" + extraClass}>
+                            <FloatComponentClick>
+
+                            </FloatComponentClick>
+                        </ImgText>
+                    </div>
+                );
+            }
             else{
-                return (<div>{ResourceRenderer.makeMe(i)}</div>);
+                return (
+                    <div>
+                        <ImgText small={0} image={i.icon} text={text} className={"resource_icon" + extraClass}>
+                        </ImgText>
+                    </div>
+                );
             }
         });
 
@@ -193,9 +259,9 @@ class CreatureRenderer extends ReactComponent{
                     <div className={"horz_flex"}>
                         <h1 className="creature_name">{this.props.creature.name}</h1>
                         <ImgText small={3} image={"info_circle.png"} text={""}>
-                            <FloatComponent>
+                            <FloatComponentHover>
                                 <InfoMenu attributes={this.props.creature.attributes} />
-                            </FloatComponent>
+                            </FloatComponentHover>
                         </ImgText>
                     </div>
                     <Bar barColor={healthbarcolor} curr={this.props.creature.currHP} max={this.props.creature.maxHP} className="hp_bar" />

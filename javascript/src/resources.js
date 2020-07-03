@@ -67,21 +67,5 @@ function getDefaultResources(){
     return [new ActionResource(), new BonusActionResource(), new ReactionResource()];
 }
 
-// REACT renderer - separate so that the object doesn't keep getting remade
-class ResourceRenderer extends ReactComponent{
-    render() {
-        return (
-          <div className="resource_icon icon">
-            <img src={"images/" + this.props.resource.icon} />
-          </div>
-        );
-    }
-    static makeMe(resource){
-        return(
-            <ResourceRenderer resource={resource} />
-        );
-    }
-}
-
 // TODO delete testing
 // ReactDOM.render(ResourceRenderer.makeMe(new ActionResource()), $("#encounter_box")[0]);

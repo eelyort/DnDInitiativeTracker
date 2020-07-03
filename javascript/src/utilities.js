@@ -81,7 +81,7 @@ class Float extends WindowSizes{
         );
     }
 }
-class FloatComponent extends React.Component{
+class FloatComponentHover extends React.Component{
     constructor(props){
         super(props);
 
@@ -129,6 +129,55 @@ class FloatComponent extends React.Component{
     }
     handleExit(e){
         // console.log("Exit");
+        this.setState((state) => ({show: false}));
+    }
+}
+class FloatComponentClick extends React.Component{
+    constructor(props){
+        super(props);
+
+        this.state = {show: false};
+        this.myRef = React.createRef();
+        this.handleClick = this.handleClick.bind(this);
+        this.handleExit = this.handleExit.bind(this);
+    }
+    render() {
+        let {maxWidth: maxWidth, maxHeight: maxHeight} = this.props;
+        if(!maxHeight){
+            maxHeight = .4;
+        }
+        if(!maxWidth){
+            maxWidth = .4;
+        }
+
+        let style = {
+            position: "absolute",
+            left: "0",
+            top: "0",
+            width: "100%",
+            height: "100%",
+        };
+
+        if(this.state.show){
+            return(
+                <div ref={this.myRef} style={style} onClick={this.handleClick} onMouseLeave={this.handleExit} onDragLeave={this.handleExit}>
+                    <Float parentRef={this.myRef} maxWidth={maxWidth} maxHeight={maxHeight} >
+                        {this.props.children}
+                    </Float>
+                </div>
+            );
+        }
+        else{
+            return(
+                <div ref={this.myRef} style={style} onClick={this.handleClick} onMouseLeave={this.handleExit} onDragLeave={this.handleExit} />
+            );
+        }
+    }
+
+    handleClick(e){
+        this.setState((state) => ({show: !state["show"]}));
+    }
+    handleExit(e){
         this.setState((state) => ({show: false}));
     }
 }

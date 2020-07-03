@@ -2,6 +2,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -12,14 +14,15 @@ var Creature = function (_Class) {
     _inherits(Creature, _Class);
 
     // resistances: 0-none, 1-resist, 2-immune, -1-vulnerable, 10x-magical x
-    function Creature(avatar, name, stats, skills, hp, ac, spd) {
-        var resistances = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : null;
-        var attributes = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : [];
-        var passives = arguments.length > 9 && arguments[9] !== undefined ? arguments[9] : [];
-        var actions = arguments.length > 10 && arguments[10] !== undefined ? arguments[10] : [];
-        var bonusActions = arguments.length > 11 && arguments[11] !== undefined ? arguments[11] : [];
-        var reactions = arguments.length > 12 && arguments[12] !== undefined ? arguments[12] : [];
-        var resources = arguments.length > 13 && arguments[13] !== undefined ? arguments[13] : null;
+    function Creature(avatar, name, stats, skills, hp, ac, spd, proficiencyBonus) {
+        var saveProficiencies = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : [0, 0, 0, 0, 0, 0];
+        var resistances = arguments.length > 9 && arguments[9] !== undefined ? arguments[9] : null;
+        var attributes = arguments.length > 10 && arguments[10] !== undefined ? arguments[10] : [];
+        var passives = arguments.length > 11 && arguments[11] !== undefined ? arguments[11] : [];
+        var actions = arguments.length > 12 && arguments[12] !== undefined ? arguments[12] : [];
+        var bonusActions = arguments.length > 13 && arguments[13] !== undefined ? arguments[13] : [];
+        var reactions = arguments.length > 14 && arguments[14] !== undefined ? arguments[14] : [];
+        var resources = arguments.length > 15 && arguments[15] !== undefined ? arguments[15] : null;
 
         _classCallCheck(this, Creature);
 
@@ -36,6 +39,10 @@ var Creature = function (_Class) {
         _this.statMods = _this.stats.map(function (i) {
             return Math.floor((i - 10) / 2);
         });
+
+        _this.profBonus = proficiencyBonus;
+        _this.saveProf = saveProficiencies;
+
         _this.skills = skills;
         // string
         _this.hpRaw = hp + "";
@@ -114,6 +121,34 @@ var Creature = function (_Class) {
             }
             this.rerender();
         }
+        // attack takes into account ac or save
+
+    }, {
+        key: "attackMe",
+        value: function attackMe(attack) {
+            var success = void 0;
+
+            // to hit
+            if (attack.isToHit) {
+                success = attack.toHitToSave >= this.ac;
+            }
+            // save
+            else {
+                    // TODO: display this save somewhere?
+                    var save = roll("1d20") + this.statMods[attack.saveStat] + this.saveProf[attack.saveStat] * this.profBonus;
+                    success = save >= attack.toHitToSave;
+                }
+
+            if (success) {
+                this.damageMe(attack.successDamage, attack.damageType);
+                this.conditions.append(attack.successConditions);
+            } else {
+                this.damageMe(attack.failDamage, attack.damageType);
+                this.conditions.append(attack.failConditions);
+            }
+
+            return success;
+        }
         // heal
 
     }, {
@@ -169,6 +204,15 @@ var Creature = function (_Class) {
                 this.maxHP = parseInt(this.hpRaw);
             }
             this.currHP = this.maxHP;
+        }
+    }, {
+        key: "updateWithRenderer",
+        value: function updateWithRenderer(rend) {
+            _get(Creature.prototype.__proto__ || Object.getPrototypeOf(Creature.prototype), "updateWithRenderer", this).call(this, rend);
+
+            for (var i = 0; i < this.resources.length; i++) {
+                this.resources[i].updateWithRenderer(rend);
+            }
         }
     }]);
 
@@ -260,32 +304,42 @@ var CreatureRenderer = function (_ReactComponent) {
     _createClass(CreatureRenderer, [{
         key: "render",
         value: function render() {
-            var _this5 = this;
-
             // TODO: delete testing
             var resources = this.props.creature.resources.map(function (i) {
+                var text = "";
+                if (i.maxVal > 1) {
+                    text = i.currVal + "/" + i.maxVal;
+                }
+                var extraClass = "";
+                if (i.currVal === 0) {
+                    extraClass = " out";
+                }
                 if (i.name === "Action") {
                     return React.createElement(
                         "div",
-                        { onClick: function onClick() {
-                                _this5.props.creature.damageMe(Math.floor(Math.random() * 20), 0);
-                            } },
-                        ResourceRenderer.makeMe(i)
+                        null,
+                        React.createElement(
+                            ImgText,
+                            { small: 0, image: i.icon, text: text, className: "resource_icon" + extraClass },
+                            React.createElement(FloatComponentClick, null)
+                        )
                     );
                 }
                 if (i.name === "Bonus Action") {
                     return React.createElement(
                         "div",
-                        { onClick: function onClick() {
-                                _this5.props.creature.healMe(Math.floor(Math.random() * 20));
-                            } },
-                        ResourceRenderer.makeMe(i)
+                        null,
+                        React.createElement(
+                            ImgText,
+                            { small: 0, image: i.icon, text: text, className: "resource_icon" + extraClass },
+                            React.createElement(FloatComponentClick, null)
+                        )
                     );
                 } else {
                     return React.createElement(
                         "div",
                         null,
-                        ResourceRenderer.makeMe(i)
+                        React.createElement(ImgText, { small: 0, image: i.icon, text: text, className: "resource_icon" + extraClass })
                     );
                 }
             });
@@ -313,7 +367,7 @@ var CreatureRenderer = function (_ReactComponent) {
                             ImgText,
                             { small: 3, image: "info_circle.png", text: "" },
                             React.createElement(
-                                FloatComponent,
+                                FloatComponentHover,
                                 null,
                                 React.createElement(InfoMenu, { attributes: this.props.creature.attributes })
                             )

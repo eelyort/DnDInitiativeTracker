@@ -131,35 +131,5 @@ function getDefaultResources() {
     return [new ActionResource(), new BonusActionResource(), new ReactionResource()];
 }
 
-// REACT renderer - separate so that the object doesn't keep getting remade
-
-var ResourceRenderer = function (_ReactComponent) {
-    _inherits(ResourceRenderer, _ReactComponent);
-
-    function ResourceRenderer() {
-        _classCallCheck(this, ResourceRenderer);
-
-        return _possibleConstructorReturn(this, (ResourceRenderer.__proto__ || Object.getPrototypeOf(ResourceRenderer)).apply(this, arguments));
-    }
-
-    _createClass(ResourceRenderer, [{
-        key: "render",
-        value: function render() {
-            return React.createElement(
-                "div",
-                { className: "resource_icon icon" },
-                React.createElement("img", { src: "images/" + this.props.resource.icon })
-            );
-        }
-    }], [{
-        key: "makeMe",
-        value: function makeMe(resource) {
-            return React.createElement(ResourceRenderer, { resource: resource });
-        }
-    }]);
-
-    return ResourceRenderer;
-}(ReactComponent);
-
 // TODO delete testing
 // ReactDOM.render(ResourceRenderer.makeMe(new ActionResource()), $("#encounter_box")[0]);

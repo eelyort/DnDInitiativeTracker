@@ -3,4 +3,4 @@ var healthbarcolor = "rgba(255,17,0,0.95)";
 
 var floatGap = 8;
 var floatOffsetEdge = 3;
-var floatPadding = 2;
+var floatPadding = 4;
